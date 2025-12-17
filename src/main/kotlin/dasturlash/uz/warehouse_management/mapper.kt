@@ -5,13 +5,11 @@ import org.springframework.stereotype.Component
 @Component
 class WarehouseMapper {
 
-    // POST: DTO -> Entity (status avtomatik true)
     fun toEntity(dto: WarehouseCreateDTO): Warehouse =
         Warehouse(name = dto.name, address = dto.address).apply {
             status = true
         }
 
-    // Entity -> DTO
     fun toDTO(entity: Warehouse): WarehouseDTO =
         WarehouseDTO(
             id = entity.id!!,
@@ -94,34 +92,12 @@ class CategoryMapper {
 }
 
 
-
-
-
-
-@Component
-class CurrencyMapper {
-
-    fun toEntity(dto: CurrencyDTO): Currency =
-        Currency(name = dto.name).apply {
-            status = dto.status
-            id = dto.id
-        }
-
-    fun toDTO(entity: Currency): CurrencyDTO =
-        CurrencyDTO(
-            id = entity.id,
-            name = entity.name,
-            status = entity.status
-        )
-}
-
-
 @Component
 class MeasurementMapper {
 
     fun toEntity(dto: MeasurementCreateDTO): Measurement =
         Measurement(name = dto.name).apply {
-            status = true // POST default active
+            status = true
         }
 
     fun toEntity(dto: MeasurementUpdateDTO, entity: Measurement): Measurement {
@@ -157,7 +133,6 @@ class ProductMapper {
             category = category,
             measurement = measurement
         )
-    // status = true avtomatik (BaseEntity)
 
     fun toResponse(entity: Product): ProductResponseDTO =
         ProductResponseDTO(
@@ -182,7 +157,6 @@ class SupplierMapper {
             name = dto.name,
             phoneNumber = dto.phoneNumber
         )
-    // status avtomatik true (BaseEntity dan)
 
     fun toResponse(entity: Supplier): SupplierResponseDTO =
         SupplierResponseDTO(
@@ -198,7 +172,6 @@ class SupplierMapper {
 @Component
 class StockInMapper {
 
-    // POST uchun DTO -> Entity
     fun toEntity(dto: StockInCreateDTO, warehouse: Warehouse, supplier: Supplier, currency: Currency): StockIn =
         StockIn(
             date = dto.date,
@@ -211,7 +184,6 @@ class StockInMapper {
             status = true // POST da default true
         }
 
-    // PUT uchun update
     fun updateEntity(entity: StockIn, dto: StockInUpdateDTO) {
         entity.date = dto.date
         entity.warehouse = entity.warehouse
@@ -247,7 +219,7 @@ class StockOutMapper {
             currency = currency,
             documentNumber = dto.documentNumber,
             invoiceNumber = dto.invoiceNumber
-        ).apply { status = true } // POST default true
+        ).apply { status = true }
 
     fun updateEntity(entity: StockOut, dto: StockOutUpdateDTO) {
         entity.date = dto.date
@@ -292,7 +264,7 @@ class StockInItemMapper {
         entity.inPrice = dto.inPrice
         entity.salePrice = dto.salePrice
         entity.expireDate = dto.expireDate
-        dto.status?.let { entity.status = it } // PUT da optional
+        dto.status?.let { entity.status = it }
     }
 
     fun toResponseDTO(entity: StockInItem): StockInItemResponseDTO =
@@ -313,16 +285,14 @@ class StockInItemMapper {
 @Component
 class StockOutItemMapper {
 
-    // POST uchun DTO -> Entity
     fun toEntity(dto: StockOutItemCreateDTO, stockOut: StockOut, stockInItem: StockInItem): StockOutItem =
         StockOutItem(
             stockOut = stockOut,
             stockInItem = stockInItem,
             quantity = dto.quantity,
             outPrice = dto.outPrice
-        ).apply { status = true } // default true POST da
+        ).apply { status = true }
 
-    // PUT uchun update
     fun updateEntity(entity: StockOutItem, dto: StockOutItemUpdateDTO) {
         entity.stockOut = entity.stockOut
         entity.stockInItem = entity.stockInItem
@@ -331,7 +301,6 @@ class StockOutItemMapper {
         dto.status?.let { entity.status = it }
     }
 
-    // Entity -> Response DTO
     fun toResponseDTO(entity: StockOutItem): StockOutItemResponseDTO =
         StockOutItemResponseDTO(
             id = entity.id!!,
@@ -355,14 +324,14 @@ class ProductImageMapper {
             contentType = dto.contentType,
             path = dto.path
         ).apply {
-            status = true // POST da default true
+            status = true
         }
 
     fun updateEntity(entity: ProductImage, dto: ProductImageUpdateDTO) {
         entity.originName = dto.originName
         entity.contentType = dto.contentType
         entity.path = dto.path
-        dto.status?.let { entity.status = it } // PUT da status optional
+        dto.status?.let { entity.status = it }
     }
 
     fun toResponseDTO(entity: ProductImage): ProductImageResponseDTO =

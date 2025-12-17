@@ -77,7 +77,6 @@ interface WarehouseRepository : BaseRepository<Warehouse> {
 interface EmployeeRepository : BaseRepository<Employee> {
     fun findByPhoneNumberAndStatusTrue(phoneNumber: String): Employee?
     fun findByEmployeeCodeAndStatusTrue(employeeCode: String): Employee?
-    // fun findByUsername(username: String): Employee?  <-- O'chiriladi
 }
 
 

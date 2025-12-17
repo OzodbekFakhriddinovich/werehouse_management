@@ -4,7 +4,6 @@ import dasturlash.uz.warehouse_management.repository.*
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
-// Service
 interface WarehouseService {
     fun create(dto: WarehouseCreateDTO): WarehouseDTO
     fun getOne(id: String): WarehouseDTO
@@ -21,43 +20,38 @@ class WarehouseServiceImpl(
     private val mapper: WarehouseMapper
 ) : WarehouseService {
 
-    // POST – yangi ombor yaratish
     override fun create(dto: WarehouseCreateDTO): WarehouseDTO {
-        // Agar shu nomdagi active ombor mavjud bo‘lsa xato chiqarish
         repository.findByNameAndStatusTrue(dto.name)?.let {
             throw RuntimeException("Warehouse with this name already exists")
         }
-        val entity = mapper.toEntity(dto) // status = true avtomatik
+        val entity = mapper.toEntity(dto)
         repository.save(entity)
         return mapper.toDTO(entity)
     }
 
-    // PUT – mavjud omborni yangilash
     override fun update(id: String, dto: WarehouseUpdateDTO): WarehouseDTO {
         val entity = repository.findById(id).orElseThrow { RuntimeException("Warehouse not found") }
 
         entity.name = dto.name
         entity.address = dto.address
 
-        // Agar bodyda status kelgan bo‘lsa, yangilash
         dto.status?.let { entity.status = it }
 
         repository.save(entity)
         return mapper.toDTO(entity)
     }
 
-    // GET bitta ombor
     override fun getOne(id: String): WarehouseDTO {
         val entity = repository.findById(id).orElseThrow { RuntimeException("Warehouse not found") }
-        if (!entity.status) throw RuntimeException("Warehouse not found") // faqat active ombor qaytariladi
+        if (!entity.status) throw RuntimeException("Warehouse not found")
         return mapper.toDTO(entity)
     }
 
-    // GET barcha omborlar
+
     override fun getAll(): List<WarehouseDTO> =
         repository.findAll().map { mapper.toDTO(it) }
 
-    // DELETE – soft delete
+
     override fun delete(id: String) {
         val entity = repository.findById(id).orElseThrow { RuntimeException("Warehouse not found") }
         entity.status = false
@@ -143,7 +137,7 @@ class EmployeeServiceImpl(
         val entity = repository.findById(id)
             .orElseThrow { RuntimeException("Employee not found") }
 
-        entity.status = false // soft delete
+        entity.status = false
         repository.save(entity)
     }
 }
@@ -265,15 +259,10 @@ class MeasurementServiceImpl(
 
 
 interface ProductService {
-
     fun create(dto: ProductCreateDTO): ProductResponseDTO
-
     fun getOne(id: String): ProductResponseDTO
-
     fun getAll(): List<ProductResponseDTO>
-
     fun update(id: String, dto: ProductUpdateDTO): ProductResponseDTO
-
     fun delete(id: String)
 }
 
