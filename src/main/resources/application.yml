@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: warehouse_management
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Warehouse_Management
+    username: warehouse_management
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  jackson:
+    serialization:
+      indent-output: true
+
+server:
+  port: 8080
+
+jwt:
+  secret: warehouse-secret-key-1234567890abcdef1234567890abcdef
+  expiration: 86400000
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
+logging:
+  level:
+    root: INFO
+
