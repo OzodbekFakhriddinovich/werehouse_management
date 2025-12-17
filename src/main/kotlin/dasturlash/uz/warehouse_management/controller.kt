@@ -473,40 +473,40 @@ class StockOutItemController(private val service: StockOutItemService) {
     }
 }
 
-//@RestController
-//@RequestMapping("/api/product-images")
-//@Tag(name = "ProductImage", description = "Mahsulot rasmlari CRUD")
-//class ProductImageController(private val service: ProductImageService) {
-//
-//    @PostMapping
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @Operation(summary = "Yangi mahsulot rasm yaratish")
-//    fun create(@RequestBody dto: ProductImageDTO): ResponseEntity<ProductImageDTO> =
-//        ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto))
-//
-//    @GetMapping("/{id}")
-//    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
-//    @Operation(summary = "Bitta mahsulot rasmni olish")
-//    fun getOne(@PathVariable id: String): ResponseEntity<ProductImageDTO> =
-//        ResponseEntity.ok(service.getOne(id))
-//
-//    @GetMapping
-//    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
-//    @Operation(summary = "Barcha mahsulot rasmlarini olish")
-//    fun getAll(): ResponseEntity<List<ProductImageDTO>> =
-//        ResponseEntity.ok(service.getAll())
-//
-//    @PutMapping("/{id}")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @Operation(summary = "Mahsulot rasmni yangilash")
-//    fun update(@PathVariable id: String, @RequestBody dto: ProductImageDTO): ResponseEntity<ProductImageDTO> =
-//        ResponseEntity.ok(service.update(id, dto))
-//
-//    @DeleteMapping("/{id}")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @Operation(summary = "Mahsulot rasmni o‘chirish (soft delete)")
-//    fun delete(@PathVariable id: String): ResponseEntity<Void> {
-//        service.delete(id)
-//        return ResponseEntity.noContent().build()
-//    }
-//}
+@RestController
+@RequestMapping("/api/product-images")
+@Tag(name = "ProductImage", description = "Mahsulot rasmlari CRUD")
+class ProductImageController(private val service: ProductImageService) {
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Yangi mahsulot rasm yaratish")
+    fun create(@RequestBody dto: ProductImageDTO): ResponseEntity<ProductImageDTO> =
+        ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto))
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
+    @Operation(summary = "Bitta mahsulot rasmni olish")
+    fun getOne(@PathVariable id: String): ResponseEntity<ProductImageDTO> =
+        ResponseEntity.ok(service.getOne(id))
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
+    @Operation(summary = "Barcha mahsulot rasmlarini olish")
+    fun getAll(): ResponseEntity<List<ProductImageDTO>> =
+        ResponseEntity.ok(service.getAll())
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Mahsulot rasmni yangilash")
+    fun update(@PathVariable id: String, @RequestBody dto: ProductImageDTO): ResponseEntity<ProductImageDTO> =
+        ResponseEntity.ok(service.update(id, dto))
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Mahsulot rasmni o‘chirish (soft delete)")
+    fun delete(@PathVariable id: String): ResponseEntity<Void> {
+        service.delete(id)
+        return ResponseEntity.noContent().build()
+    }
+}

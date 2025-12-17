@@ -109,6 +109,7 @@ class CurrencyDTO(
 
 class ProductImageDTO(
     val id: String? = null,
+    val productId: String,
     val originName: String,
     val contentType: String,
     val path: String,
