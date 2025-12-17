@@ -422,10 +422,10 @@ class SupplierServiceImpl(
 
 
 interface StockInService {
-    fun create(dto: StockInDTO): StockInDTO
-    fun getOne(id: String): StockInDTO
-    fun getAll(): List<StockInDTO>
-    fun update(id: String, dto: StockInDTO): StockInDTO
+    fun create(dto: StockInCreateDTO): StockInResponseDTO
+    fun getOne(id: String): StockInResponseDTO
+    fun getAll(): List<StockInResponseDTO>
+    fun update(id: String, dto: StockInUpdateDTO): StockInResponseDTO
     fun delete(id: String)
 }
 
@@ -438,45 +438,48 @@ class StockInServiceImpl(
     private val mapper: StockInMapper
 ) : StockInService {
 
-    override fun create(dto: StockInDTO): StockInDTO {
-        val warehouse: Warehouse = warehouseRepository.findByIdAndStatusTrue(dto.warehouseId)
+    override fun create(dto: StockInCreateDTO): StockInResponseDTO {
+        val warehouse = warehouseRepository.findByIdAndStatusTrue(dto.warehouseId)
             ?: throw RuntimeException("Warehouse not found")
-        val supplier: Supplier = supplierRepository.findByIdAndStatusTrue(dto.supplierId)
+        val supplier = supplierRepository.findByIdAndStatusTrue(dto.supplierId)
             ?: throw RuntimeException("Supplier not found")
-        val currency: Currency = currencyRepository.findByIdAndStatusTrue(dto.currencyId)
+        val currency = currencyRepository.findByIdAndStatusTrue(dto.currencyId)
             ?: throw RuntimeException("Currency not found")
+
         val entity = mapper.toEntity(dto, warehouse, supplier, currency)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getOne(id: String): StockInDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("StockIn not found")
-        return mapper.toDTO(entity)
+    override fun getOne(id: String): StockInResponseDTO {
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockIn not found") }
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getAll(): List<StockInDTO> =
-        repository.findAllByStatusTrue().map { mapper.toDTO(it) }
+    override fun getAll(): List<StockInResponseDTO> =
+        repository.findAll().map { mapper.toResponseDTO(it) }
 
-    override fun update(id: String, dto: StockInDTO): StockInDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("StockIn not found")
-        dto.documentNumber.let { entity.documentNumber = it }
-        dto.invoiceNumber.let { entity.invoiceNumber = it }
+    override fun update(id: String, dto: StockInUpdateDTO): StockInResponseDTO {
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockIn not found") }
+        mapper.updateEntity(entity, dto)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
     override fun delete(id: String) {
-        repository.disable(id) ?: throw RuntimeException("StockIn not found")
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockIn not found") }
+        entity.status = false
+        repository.save(entity)
     }
 }
 
 
+
 interface StockOutService {
-    fun create(dto: StockOutDTO): StockOutDTO
-    fun getOne(id: String): StockOutDTO
-    fun getAll(): List<StockOutDTO>
-    fun update(id: String, dto: StockOutDTO): StockOutDTO
+    fun create(dto: StockOutCreateDTO): StockOutResponseDTO
+    fun getOne(id: String): StockOutResponseDTO
+    fun getAll(): List<StockOutResponseDTO>
+    fun update(id: String, dto: StockOutUpdateDTO): StockOutResponseDTO
     fun delete(id: String)
 }
 
@@ -488,43 +491,45 @@ class StockOutServiceImpl(
     private val mapper: StockOutMapper
 ) : StockOutService {
 
-    override fun create(dto: StockOutDTO): StockOutDTO {
-        val warehouse: Warehouse = warehouseRepository.findByIdAndStatusTrue(dto.warehouseId)
+    override fun create(dto: StockOutCreateDTO): StockOutResponseDTO {
+        val warehouse = warehouseRepository.findByIdAndStatusTrue(dto.warehouseId)
             ?: throw RuntimeException("Warehouse not found")
-        val currency: Currency = currencyRepository.findByIdAndStatusTrue(dto.currencyId)
+        val currency = currencyRepository.findByIdAndStatusTrue(dto.currencyId)
             ?: throw RuntimeException("Currency not found")
         val entity = mapper.toEntity(dto, warehouse, currency)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getOne(id: String): StockOutDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("StockOut not found")
-        return mapper.toDTO(entity)
+    override fun getOne(id: String): StockOutResponseDTO {
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockOut not found") }
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getAll(): List<StockOutDTO> =
-        repository.findAllByStatusTrue().map { mapper.toDTO(it) }
+    override fun getAll(): List<StockOutResponseDTO> =
+        repository.findAll().map { mapper.toResponseDTO(it) }
 
-    override fun update(id: String, dto: StockOutDTO): StockOutDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("StockOut not found")
-        dto.documentNumber.let { entity.documentNumber = it }
-        dto.invoiceNumber.let { entity.invoiceNumber = it }
+    override fun update(id: String, dto: StockOutUpdateDTO): StockOutResponseDTO {
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockOut not found") }
+        mapper.updateEntity(entity, dto)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
     override fun delete(id: String) {
-        repository.disable(id) ?: throw RuntimeException("StockOut not found")
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockOut not found") }
+        entity.status = false
+        repository.save(entity)
     }
 }
 
 
+
 interface StockInItemService {
-    fun create(dto: StockInItemDTO): StockInItemDTO
-    fun getOne(id: String): StockInItemDTO
-    fun getAll(): List<StockInItemDTO>
-    fun update(id: String, dto: StockInItemDTO): StockInItemDTO
+    fun create(dto: StockInItemCreateDTO): StockInItemResponseDTO
+    fun getOne(id: String): StockInItemResponseDTO
+    fun getAll(): List<StockInItemResponseDTO>
+    fun update(id: String, dto: StockInItemUpdateDTO): StockInItemResponseDTO
     fun delete(id: String)
 }
 
@@ -536,45 +541,45 @@ class StockInItemServiceImpl(
     private val mapper: StockInItemMapper
 ) : StockInItemService {
 
-    override fun create(dto: StockInItemDTO): StockInItemDTO {
-        val stockIn: StockIn = stockInRepository.findByIdAndStatusTrue(dto.stockInId)
+    override fun create(dto: StockInItemCreateDTO): StockInItemResponseDTO {
+        val stockIn = stockInRepository.findByIdAndStatusTrue(dto.stockInId)
             ?: throw RuntimeException("StockIn not found")
-        val product: Product = productRepository.findByIdAndStatusTrue(dto.productId)
+        val product = productRepository.findByIdAndStatusTrue(dto.productId)
             ?: throw RuntimeException("Product not found")
         val entity = mapper.toEntity(dto, stockIn, product)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getOne(id: String): StockInItemDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("StockInItem not found")
-        return mapper.toDTO(entity)
+    override fun getOne(id: String): StockInItemResponseDTO {
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockInItem not found") }
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getAll(): List<StockInItemDTO> =
-        repository.findAllByStatusTrue().map { mapper.toDTO(it) }
+    override fun getAll(): List<StockInItemResponseDTO> =
+        repository.findAll().map { mapper.toResponseDTO(it) } // true/false status hammasi
 
-    override fun update(id: String, dto: StockInItemDTO): StockInItemDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("StockInItem not found")
-        entity.quantity = dto.quantity
-        entity.inPrice = dto.inPrice
-        entity.salePrice = dto.salePrice
-        entity.expireDate = dto.expireDate
+    override fun update(id: String, dto: StockInItemUpdateDTO): StockInItemResponseDTO {
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockInItem not found") }
+        mapper.updateEntity(entity, dto)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
     override fun delete(id: String) {
-        repository.disable(id) ?: throw RuntimeException("StockInItem not found")
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockInItem not found") }
+        entity.status = false
+        repository.save(entity)
     }
 }
 
 
+
 interface StockOutItemService {
-    fun create(dto: StockOutItemDTO): StockOutItemDTO
-    fun getOne(id: String): StockOutItemDTO
-    fun getAll(): List<StockOutItemDTO>
-    fun update(id: String, dto: StockOutItemDTO): StockOutItemDTO
+    fun create(dto: StockOutItemCreateDTO): StockOutItemResponseDTO
+    fun getOne(id: String): StockOutItemResponseDTO
+    fun getAll(): List<StockOutItemResponseDTO>
+    fun update(id: String, dto: StockOutItemUpdateDTO): StockOutItemResponseDTO
     fun delete(id: String)
 }
 
@@ -586,42 +591,44 @@ class StockOutItemServiceImpl(
     private val mapper: StockOutItemMapper
 ) : StockOutItemService {
 
-    override fun create(dto: StockOutItemDTO): StockOutItemDTO {
-        val stockOut: StockOut = stockOutRepository.findByIdAndStatusTrue(dto.stockOutId)
+    override fun create(dto: StockOutItemCreateDTO): StockOutItemResponseDTO {
+        val stockOut = stockOutRepository.findByIdAndStatusTrue(dto.stockOutId)
             ?: throw RuntimeException("StockOut not found")
-        val stockInItem: StockInItem = stockInItemRepository.findByIdAndStatusTrue(dto.stockInItemId)
+        val stockInItem = stockInItemRepository.findByIdAndStatusTrue(dto.stockInItemId)
             ?: throw RuntimeException("StockInItem not found")
         val entity = mapper.toEntity(dto, stockOut, stockInItem)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getOne(id: String): StockOutItemDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("StockOutItem not found")
-        return mapper.toDTO(entity)
+    override fun getOne(id: String): StockOutItemResponseDTO {
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockOutItem not found") }
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getAll(): List<StockOutItemDTO> =
-        repository.findAllByStatusTrue().map { mapper.toDTO(it) }
+    override fun getAll(): List<StockOutItemResponseDTO> =
+        repository.findAll().map { mapper.toResponseDTO(it) } // true/false hammasi
 
-    override fun update(id: String, dto: StockOutItemDTO): StockOutItemDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("StockOutItem not found")
-        entity.quantity = dto.quantity
-        entity.outPrice = dto.outPrice
+    override fun update(id: String, dto: StockOutItemUpdateDTO): StockOutItemResponseDTO {
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockOutItem not found") }
+        mapper.updateEntity(entity, dto)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
     override fun delete(id: String) {
-        repository.disable(id) ?: throw RuntimeException("StockOutItem not found")
+        val entity = repository.findById(id).orElseThrow { RuntimeException("StockOutItem not found") }
+        entity.status = false
+        repository.save(entity)
     }
 }
 
+
 interface ProductImageService {
-    fun create(dto: ProductImageDTO): ProductImageDTO
-    fun getOne(id: String): ProductImageDTO
-    fun getAll(): List<ProductImageDTO>
-    fun update(id: String, dto: ProductImageDTO): ProductImageDTO
+    fun create(dto: ProductImageCreateDTO): ProductImageResponseDTO
+    fun getOne(id: String): ProductImageResponseDTO
+    fun getAll(): List<ProductImageResponseDTO>
+    fun update(id: String, dto: ProductImageUpdateDTO): ProductImageResponseDTO
     fun delete(id: String)
 }
 
@@ -632,35 +639,39 @@ class ProductImageServiceImpl(
     private val mapper: ProductImageMapper
 ) : ProductImageService {
 
-    override fun create(dto: ProductImageDTO): ProductImageDTO {
-        val product: Product = productRepository.findByIdAndStatusTrue(dto.productId)
+    override fun create(dto: ProductImageCreateDTO): ProductImageResponseDTO {
+        val product = productRepository.findByIdAndStatusTrue(dto.productId)
             ?: throw RuntimeException("Product not found")
-
         val entity = mapper.toEntity(dto, product)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getOne(id: String): ProductImageDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("ProductImage not found")
-        return mapper.toDTO(entity)
+    override fun getOne(id: String): ProductImageResponseDTO {
+        val entity = repository.findById(id)
+            .orElseThrow { RuntimeException("ProductImage not found") }
+        return mapper.toResponseDTO(entity)
     }
 
-    override fun getAll(): List<ProductImageDTO> =
-        repository.findAllByStatusTrue().map { mapper.toDTO(it) }
+    override fun getAll(): List<ProductImageResponseDTO> =
+        repository.findAll().map { mapper.toResponseDTO(it) }
 
-    override fun update(id: String, dto: ProductImageDTO): ProductImageDTO {
-        val entity = repository.findByIdAndStatusTrue(id) ?: throw RuntimeException("ProductImage not found")
-        entity.originName = dto.originName
-        entity.contentType = dto.contentType
-        entity.path = dto.path
-        entity.status = dto.status
+    override fun update(id: String, dto: ProductImageUpdateDTO): ProductImageResponseDTO {
+        val entity = repository.findById(id)
+            .orElseThrow { RuntimeException("ProductImage not found") }
+        mapper.updateEntity(entity, dto)
         repository.save(entity)
-        return mapper.toDTO(entity)
+        return mapper.toResponseDTO(entity)
     }
 
     override fun delete(id: String) {
-        repository.disable(id) ?: throw RuntimeException("ProductImage not found")
+        val entity = repository.findById(id)
+            .orElseThrow { RuntimeException("ProductImage not found") }
+        entity.status = false
+        repository.save(entity)
     }
 }
+
+
+
 

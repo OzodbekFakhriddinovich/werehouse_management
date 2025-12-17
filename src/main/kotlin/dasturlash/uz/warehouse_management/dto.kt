@@ -107,14 +107,31 @@ class CurrencyDTO(
 
 
 
-class ProductImageDTO(
-    val id: String? = null,
+class ProductImageCreateDTO(
+    val productId: String,
+    val originName: String,
+    val contentType: String,
+    val path: String
+)
+
+class ProductImageUpdateDTO(
     val productId: String,
     val originName: String,
     val contentType: String,
     val path: String,
-    val status: Boolean = true
+    val status: Boolean? = null
 )
+
+class ProductImageResponseDTO(
+    val id: String,
+    val productId: String,
+    val originName: String,
+    val contentType: String,
+    val path: String,
+    val status: Boolean
+)
+
+
 
 class ProductCreateDTO(
     val name: String,
@@ -166,8 +183,27 @@ class SupplierResponseDTO(
 
 
 
-class StockInDTO(
-    val id: String?,
+class StockInCreateDTO(
+    val date: LocalDate,
+    val warehouseId: String,
+    val supplierId: String,
+    val currencyId: String,
+    val documentNumber: String,
+    val invoiceNumber: String
+)
+
+class StockInUpdateDTO(
+    val date: LocalDate,
+    val warehouseId: String,
+    val supplierId: String,
+    val currencyId: String,
+    val documentNumber: String,
+    val invoiceNumber: String,
+    val status: Boolean? = null
+)
+
+class StockInResponseDTO(
+    val id: String,
     val date: LocalDate,
     val warehouseId: String,
     val supplierId: String,
@@ -178,8 +214,26 @@ class StockInDTO(
 )
 
 
-class StockOutDTO(
-    val id: String?,
+
+class StockOutCreateDTO(
+    val date: LocalDate,
+    val warehouseId: String,
+    val currencyId: String,
+    val documentNumber: String,
+    val invoiceNumber: String
+)
+
+class StockOutUpdateDTO(
+    val date: LocalDate,
+    val warehouseId: String,
+    val currencyId: String,
+    val documentNumber: String,
+    val invoiceNumber: String,
+    val status: Boolean? = null // optional
+)
+
+class StockOutResponseDTO(
+    val id: String,
     val date: LocalDate,
     val warehouseId: String,
     val currencyId: String,
@@ -189,8 +243,28 @@ class StockOutDTO(
 )
 
 
-class StockInItemDTO(
-    val id: String?,
+
+class StockInItemCreateDTO(
+    val stockInId: String,
+    val productId: String,
+    val quantity: Double,
+    val inPrice: Double,
+    val salePrice: Double,
+    val expireDate: LocalDate?
+)
+
+class StockInItemUpdateDTO(
+    val stockInId: String,
+    val productId: String,
+    val quantity: Double,
+    val inPrice: Double,
+    val salePrice: Double,
+    val expireDate: LocalDate?,
+    val status: Boolean? = null
+)
+
+class StockInItemResponseDTO(
+    val id: String,
     val stockInId: String,
     val productId: String,
     val quantity: Double,
@@ -201,14 +275,31 @@ class StockInItemDTO(
 )
 
 
-class StockOutItemDTO(
-    val id: String?,
+
+class StockOutItemCreateDTO(
+    val stockOutId: String,
+    val stockInItemId: String,
+    val quantity: Double,
+    val outPrice: Double
+)
+
+class StockOutItemUpdateDTO(
+    val stockOutId: String,
+    val stockInItemId: String,
+    val quantity: Double,
+    val outPrice: Double,
+    val status: Boolean? = null
+)
+
+class StockOutItemResponseDTO(
+    val id: String,
     val stockOutId: String,
     val stockInItemId: String,
     val quantity: Double,
     val outPrice: Double,
     val status: Boolean
 )
+
 
 
 

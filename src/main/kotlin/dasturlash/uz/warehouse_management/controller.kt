@@ -27,7 +27,6 @@ class AuthController(
     @PostMapping("/login")
     @Operation(summary = "login orqali jwt token olish")
     fun login(@RequestBody request: LoginRequest): ResponseEntity<LoginResponse> {
-        // Authentication
         val userDetails = userDetailsService.loadUserByUsername(request.phoneNumber)
 
         if (!passwordEncoder.matches(request.password, userDetails.password)) {
@@ -89,7 +88,6 @@ class EmployeeController(
     private val service: EmployeeService
 ) {
 
-    // CREATE
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Yangi ishchi yaratish")
@@ -98,21 +96,18 @@ class EmployeeController(
     ): ResponseEntity<EmployeeDTO> =
         ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto))
 
-    // GET ONE
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Bitta ishchini olish")
     fun getOne(@PathVariable id: String): ResponseEntity<EmployeeDTO> =
         ResponseEntity.ok(service.getOne(id))
 
-    // GET ALL
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Barcha ishchilarni olish")
     fun getAll(): ResponseEntity<List<EmployeeDTO>> =
         ResponseEntity.ok(service.getAll())
 
-    // UPDATE
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Ishchini yangilash")
@@ -122,7 +117,6 @@ class EmployeeController(
     ): ResponseEntity<EmployeeDTO> =
         ResponseEntity.ok(service.update(id, dto))
 
-    // DELETE (SOFT)
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Ishchini o‘chirish (soft delete)")
@@ -143,22 +137,25 @@ class CategoryController(private val service: CategoryService) {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Yangi kategoriya yaratish")
     fun create(@RequestBody dto: CategoryCreateDTO): ResponseEntity<CategoryDTO> =
         ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto))
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
+    @Operation(summary = "Bitta kategoriyani olish")
     fun getOne(@PathVariable id: String): ResponseEntity<CategoryDTO> =
         ResponseEntity.ok(service.getOne(id))
 
-
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
+    @Operation(summary = "Barcha kategoriyalarni olish")
     fun getAll(): ResponseEntity<List<CategoryDTO>> =
         ResponseEntity.ok(service.getAll())
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Kategoriyani yangilash")
     fun update(
         @PathVariable id: String,
         @RequestBody dto: CategoryUpdateDTO
@@ -167,6 +164,7 @@ class CategoryController(private val service: CategoryService) {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Kategoriya o‘chirish (soft delete)")
     fun delete(@PathVariable id: String): ResponseEntity<Void> {
         service.delete(id)
         return ResponseEntity.noContent().build()
@@ -181,26 +179,31 @@ class MeasurementController(private val service: MeasurementService) {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Yangi o'lchov birligi yaratish")
     fun create(@RequestBody dto: MeasurementCreateDTO): MeasurementResponseDTO =
         service.create(dto)
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
+    @Operation(summary = "Bitta o'lchov birligini olish")
     fun getOne(@PathVariable id: String): MeasurementResponseDTO =
         service.getOne(id)
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
+    @Operation(summary = "Barcha o'lchov birliklarini olish")
     fun getAll(): List<MeasurementResponseDTO> =
         service.getAll()
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "O'lchov birligini yangilash")
     fun update(@PathVariable id: String, @RequestBody dto: MeasurementUpdateDTO): MeasurementResponseDTO =
         service.update(id, dto)
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "O'lchov birligini o‘chirish (soft delete)")
     fun delete(@PathVariable id: String): ResponseEntity<Void> {
         service.delete(id)
         return ResponseEntity.noContent().build()
@@ -324,25 +327,25 @@ class StockInController(private val service: StockInService) {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Yangi kirim yaratish")
-    fun create(@RequestBody dto: StockInDTO): ResponseEntity<StockInDTO> =
+    fun create(@RequestBody dto: StockInCreateDTO) =
         ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto))
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Bitta kirimni olish")
-    fun getOne(@PathVariable id: String): ResponseEntity<StockInDTO> =
-        ResponseEntity.ok(service.getOne(id))
+    fun getOne(@PathVariable id: String) = ResponseEntity.ok(service.getOne(id))
+
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Barcha kirimlarni olish")
-    fun getAll(): ResponseEntity<List<StockInDTO>> =
-        ResponseEntity.ok(service.getAll())
+    fun getAll() = ResponseEntity.ok(service.getAll())
+
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Kirimni yangilash")
-    fun update(@PathVariable id: String, @RequestBody dto: StockInDTO): ResponseEntity<StockInDTO> =
+    fun update(@PathVariable id: String, @RequestBody dto: StockInUpdateDTO) =
         ResponseEntity.ok(service.update(id, dto))
 
     @DeleteMapping("/{id}")
@@ -364,25 +367,25 @@ class StockOutController(private val service: StockOutService) {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Yangi chiqim yaratish")
-    fun create(@RequestBody dto: StockOutDTO): ResponseEntity<StockOutDTO> =
+    fun create(@RequestBody dto: StockOutCreateDTO) =
         ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto))
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Bitta chiqimni olish")
-    fun getOne(@PathVariable id: String): ResponseEntity<StockOutDTO> =
-        ResponseEntity.ok(service.getOne(id))
+    fun getOne(@PathVariable id: String) = ResponseEntity.ok(service.getOne(id))
+
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Barcha chiqimlarni olish")
-    fun getAll(): ResponseEntity<List<StockOutDTO>> =
-        ResponseEntity.ok(service.getAll())
+    fun getAll() = ResponseEntity.ok(service.getAll())
+
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Chiqimni yangilash")
-    fun update(@PathVariable id: String, @RequestBody dto: StockOutDTO): ResponseEntity<StockOutDTO> =
+    fun update(@PathVariable id: String, @RequestBody dto: StockOutUpdateDTO) =
         ResponseEntity.ok(service.update(id, dto))
 
     @DeleteMapping("/{id}")
@@ -404,25 +407,25 @@ class StockInItemController(private val service: StockInItemService) {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Yangi kirim mahsuloti yaratish")
-    fun create(@RequestBody dto: StockInItemDTO): ResponseEntity<StockInItemDTO> =
+    fun create(@RequestBody dto: StockInItemCreateDTO) =
         ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto))
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Bitta kirim mahsulotini olish")
-    fun getOne(@PathVariable id: String): ResponseEntity<StockInItemDTO> =
-        ResponseEntity.ok(service.getOne(id))
+    fun getOne(@PathVariable id: String) = ResponseEntity.ok(service.getOne(id))
+
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Barcha kirim mahsulotlarini olish")
-    fun getAll(): ResponseEntity<List<StockInItemDTO>> =
-        ResponseEntity.ok(service.getAll())
+    fun getAll() = ResponseEntity.ok(service.getAll())
+
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Kirim mahsulotini yangilash")
-    fun update(@PathVariable id: String, @RequestBody dto: StockInItemDTO): ResponseEntity<StockInItemDTO> =
+    fun update(@PathVariable id: String, @RequestBody dto: StockInItemUpdateDTO) =
         ResponseEntity.ok(service.update(id, dto))
 
     @DeleteMapping("/{id}")
@@ -443,25 +446,25 @@ class StockOutItemController(private val service: StockOutItemService) {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Yangi chiqim mahsuloti yaratish")
-    fun create(@RequestBody dto: StockOutItemDTO): ResponseEntity<StockOutItemDTO> =
+    fun create(@RequestBody dto: StockOutItemCreateDTO) =
         ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto))
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Bitta chiqim mahsulotini olish")
-    fun getOne(@PathVariable id: String): ResponseEntity<StockOutItemDTO> =
-        ResponseEntity.ok(service.getOne(id))
+    fun getOne(@PathVariable id: String) = ResponseEntity.ok(service.getOne(id))
+
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @Operation(summary = "Barcha chiqim mahsulotlarini olish")
-    fun getAll(): ResponseEntity<List<StockOutItemDTO>> =
-        ResponseEntity.ok(service.getAll())
+    fun getAll() = ResponseEntity.ok(service.getAll())
+
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Chiqim mahsulotini yangilash")
-    fun update(@PathVariable id: String, @RequestBody dto: StockOutItemDTO): ResponseEntity<StockOutItemDTO> =
+    fun update(@PathVariable id: String, @RequestBody dto: StockOutItemUpdateDTO) =
         ResponseEntity.ok(service.update(id, dto))
 
     @DeleteMapping("/{id}")
@@ -481,25 +484,25 @@ class ProductImageController(private val service: ProductImageService) {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Yangi mahsulot rasm yaratish")
-    fun create(@RequestBody dto: ProductImageDTO): ResponseEntity<ProductImageDTO> =
+    fun create(@RequestBody dto: ProductImageCreateDTO) =
         ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto))
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     @Operation(summary = "Bitta mahsulot rasmni olish")
-    fun getOne(@PathVariable id: String): ResponseEntity<ProductImageDTO> =
-        ResponseEntity.ok(service.getOne(id))
+    fun getOne(@PathVariable id: String) = ResponseEntity.ok(service.getOne(id))
+
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     @Operation(summary = "Barcha mahsulot rasmlarini olish")
-    fun getAll(): ResponseEntity<List<ProductImageDTO>> =
-        ResponseEntity.ok(service.getAll())
+    fun getAll() = ResponseEntity.ok(service.getAll())
+
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Mahsulot rasmni yangilash")
-    fun update(@PathVariable id: String, @RequestBody dto: ProductImageDTO): ResponseEntity<ProductImageDTO> =
+    fun update(@PathVariable id: String, @RequestBody dto: ProductImageUpdateDTO) =
         ResponseEntity.ok(service.update(id, dto))
 
     @DeleteMapping("/{id}")
